@@ -10,8 +10,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // text controller
+  final _controller = TextEditingController();
+
 // list of todo task
-  List ToDoList = [
+  List toDoList = [
     ["make me rich", false],
     ["do exercise", false],
   ];
@@ -19,8 +22,17 @@ class _HomePageState extends State<HomePage> {
   // checkbax was tapped
   void checkBoxChanged(bool? value, int index) {
     setState(() {
-      ToDoList[index][1] = !ToDoList[index][1];
+      toDoList[index][1] = !toDoList[index][1];
     });
+  }
+
+  // save new task
+  void saveNewTask() {
+    setState(() {
+      toDoList.add([_controller.text, false]);
+      _controller.clear();
+    });
+    Navigator.of(context).pop();
   }
 
   // create new task when the button push
@@ -28,7 +40,11 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) {
-        return DialogBox();
+        return DialogBox(
+          controller: _controller,
+          onSave: saveNewTask,
+          onCancal: () => Navigator.of(context).pop(),
+        );
       },
     );
   }
@@ -48,12 +64,12 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       body: ListView.builder(
-        itemCount: ToDoList.length,
+        itemCount: toDoList.length,
         itemBuilder: (context, index) {
           return ToDoTile(
-            taskName: ToDoList[index][0],
-            taskCompleted: ToDoList[index][1],
-            onChanged: (value) => checkBoxChanged(ToDoList[index][1], index),
+            taskName: toDoList[index][0],
+            taskCompleted: toDoList[index][1],
+            onChanged: (value) => checkBoxChanged(toDoList[index][1], index),
           );
         },
       ),
